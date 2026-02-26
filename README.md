@@ -12,6 +12,6 @@ _In case of **Task A** I choose the **custom solution**._
 
 Please see the plans below:
 
-- [Task A](./TASK_A.md)
-- [Task B](./TASK_B.md)
+- [Task A](./Task_A.md)
+- [Task B](./Task_B.md)
 
