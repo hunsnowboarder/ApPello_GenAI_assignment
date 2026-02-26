@@ -350,15 +350,22 @@ flowchart LR
 ```mermaid
 flowchart TD
     A[BA uses BA Copilot] --> B[Output delivered]
-    B --> C{BA rates output\n👍 / 👎 + optional comment}
-    C --> D[(Feedback Store\nPostgreSQL)]
-    D --> E[Weekly Evaluation Report\nvia Langfuse]
-    E --> F{Score regression\nor negative feedback spike?}
+    B --> C{BA rates output
+    👍 / 👎 + optional comment}
+    C --> D[(Feedback Store
+    PostgreSQL)]
+    D --> E[Weekly Evaluation Report
+    via Langfuse]
+    E --> F{Score regression
+    or negative feedback spike?}
     F -->|Yes| G[Prompt Engineering Review]
     F -->|No| H[Monitor — no action]
-    G --> I[Update Prompt in Langfuse\nwith new version tag]
-    I --> J[Run golden dataset eval\nin staging]
-    J -->|Pass| K[Promote to production\nvia CI/CD]
+    G --> I[Update Prompt in Langfuse
+    with new version tag]
+    I --> J[Run golden dataset evaluation
+    staging]
+    J -->|Pass| K[Promote to production
+    via CI/CD]
     J -->|Fail| G
     K --> A
 ```
@@ -369,32 +376,45 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph AZ1["Availability Zone 1"]
-        API1[FastAPI Service\nReplica 1]
-        AG1[Agent Workers\nReplica 1]
+        API1[FastAPI Service
+        Replica 1]
+        AG1[Agent Workers
+        Replica 1]
     end
 
     subgraph AZ2["Availability Zone 2"]
-        API2[FastAPI Service\nReplica 2]
-        AG2[Agent Workers\nReplica 2]
+        API2[FastAPI Service
+        Replica 2]
+        AG2[Agent Workers
+        Replica 2]
     end
 
-    LB[Azure Application Gateway\nLoad Balancer] --> API1 & API2
-    API1 & API2 --> RQ[Redis Queue\nCelery Task Bus]
+    LB[Azure Application Gateway
+    Load Balancer] --> API1 & API2
+    API1 & API2 --> RQ[Redis Queue
+    Celery Task Bus]
     RQ --> AG1 & AG2
 
-    AG1 & AG2 --> LG[LiteLLM Gateway\nK8s Deployment]
-    AG1 & AG2 --> QD[(Qdrant\nVector Store Cluster)]
-    AG1 & AG2 --> PG[(PostgreSQL\nSession + Feedback DB)]
-    AG1 & AG2 --> MEM[(Mem0 / Zep\nLong-term BA Memory)]
+    AG1 & AG2 --> LG[LiteLLM Gateway
+    K8s Deployment]
+    AG1 & AG2 --> QD[(Qdrant
+    Vector Store Cluster)]
+    AG1 & AG2 --> PG[(PostgreSQL
+    Session + Feedback DB)]
+    AG1 & AG2 --> MEM[(Mem0 / Zep
+    Long-term BA Memory)]
 
     LG --> EXT1[OpenAI API]
     LG --> EXT2[Azure OpenAI]
     LG --> EXT3[Google Gemini]
 
     subgraph OBS["Observability Stack"]
-        LF[Langfuse\nLLM Tracing]
-        PR[Prometheus + Grafana\nSystem Metrics]
-        ELK[ELK Stack\nLog Aggregation]
+        LF[Langfuse
+        LLM Tracing]
+        PR[Prometheus + Grafana
+        System Metrics]
+        ELK[ELK Stack
+        Log Aggregation]
     end
 
     AG1 & AG2 --> OBS
@@ -429,12 +449,21 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    P1[Pilot\n2 BAs\n2 weeks] --> P2[Canary\n20% of BA team\n2 weeks]
-    P2 --> P3[Staged Rollout\n60% of BA team\n2 weeks]
-    P3 --> P4[Full Production\n100% + Onboarding]
+    P1[Pilot
+    2 BAs
+    2 weeks] --> P2[Canary
+    20% of BA team
+    2 weeks]
+    P2 --> P3[Staged Rollout
+    60% of BA team
+    2 weeks]
+    P3 --> P4[Full Production
+    100% + Onboarding]
 
-    P1 -->|Feedback KPIs not met| Fix[Iterate on Prompts\nFix Bugs → Restart Pilot]
-    P2 -->|Error rate spike| RB[Rollback to previous\nHelm release]
+    P1 -->|Feedback KPIs not met| Fix[Iterate on Prompts
+    Fix Bugs → Restart Pilot]
+    P2 -->|Error rate spike| RB[Rollback to previous
+    Helm release]
 ```
 
 - **Canary deployment:** Route 20% of traffic to new agent version; monitor P95 latency, error rate, and hallucination flag rate for 48 hours before promoting
@@ -473,9 +502,15 @@ flowchart LR
 flowchart TD
     A[Component Latency / Error Detected] --> B{Severity Level?}
 
-    B -->|P95 latency exceeded\nor transient error| C[Level 1: Retry with\nExponential Backoff]
-    B -->|Persistent degradation\n> 60 seconds| D[Level 2: Activate\nFallback Component]
-    B -->|Fallback also degraded\nor full outage| E[Level 3: Graceful Bypass\n+ Human Notification]
+    B -->|P95 latency exceeded
+    or transient error| C[Level 1: Retry with
+    Exponential Backoff]
+    B -->|Persistent degradation
+    > 60 seconds| D[Level 2: Activate
+    Fallback Component]
+    B -->|Fallback also degraded
+    or full outage| E[Level 3: Graceful Bypass
+    + Human Notification]
 
     C -->|Resolved| Z[Resume Normal Operation]
     C -->|Not resolved after 3 retries| D
@@ -483,9 +518,12 @@ flowchart TD
     D -->|Resolved| Z
     D -->|Not resolved after 5 min| E
 
-    E --> F[Notify BA via UI banner\n'Reduced functionality mode']
-    E --> G[Log incident to PagerDuty\n+ Langfuse trace]
-    F & G --> H[Manual BA workflow\nor async queue for retry]
+    E --> F[Notify BA via UI banner
+    'Reduced functionality mode']
+    E --> G[Log incident to PagerDuty
+    + Langfuse trace]
+    F & G --> H[Manual BA workflow
+    or async queue for retry]
 ```
 
 ### 6.2 Component-Level Contingency Matrix
@@ -507,18 +545,29 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    INPUT[BA Request] --> CB{Circuit Breaker\nLangGraph Health Check}
+    INPUT[BA Request] --> CB{Circuit Breaker
+    LangGraph Health Check}
 
-    CB -->|Healthy\nlatency < 8s| LG[LangGraph\nFull Agent Graph]
-    CB -->|Degraded\nlatency 8–20s| LCEL[LCEL Linear Chain\nSimplified single-agent mode]
-    CB -->|Down\nlatency > 20s or error| SSP[Single-Shot Prompt\nDirect LLM call, no tools]
+    CB -->|Healthy
+    latency < 8s| LG[LangGraph
+    Full Agent Graph]
+    CB -->|Degraded
+    latency 8–20s| LCEL[LCEL Linear Chain
+    Simplified single-agent mode]
+    CB -->|Down
+    latency > 20s or error| SSP[Single-Shot Prompt
+    Direct LLM call, no tools]
 
-    LG --> OUT[Full structured output\nwith tool calls + memory]
-    LCEL --> OUT2[Partial output\nno tool calls, limited context]
-    SSP --> OUT3[Best-effort output\n⚠️ flagged as degraded mode]
+    LG --> OUT[Full structured output
+    with tool calls + memory]
+    LCEL --> OUT2[Partial output
+    no tool calls, limited context]
+    SSP --> OUT3[Best-effort output
+    ⚠️ flagged as degraded mode]
 
     OUT & OUT2 & OUT3 --> HITL_CHECK{Degraded mode?}
-    HITL_CHECK -->|Yes| HITL[Mandatory HITL Review\nbefore any downstream action]
+    HITL_CHECK -->|Yes| HITL[Mandatory HITL Review
+    before any downstream action]
     HITL_CHECK -->|No| DELIVER[Deliver to BA]
     HITL --> DELIVER
 ```
@@ -539,14 +588,19 @@ flowchart LR
     end
 
     subgraph Thresholds["⚡ Auto-Response Thresholds"]
-        T1["Latency > 8s P95\n→ Trigger Level 1 Retry"]
-        T2["Latency > 20s or Error rate > 5%\n→ Trigger Level 2 Fallback"]
-        T3["Fallback also > 20s or Error rate > 20%\n→ Trigger Level 3 Bypass + PagerDuty"]
-        T4["Queue depth > 100 jobs\n→ Auto-scale agent workers (K8s HPA)"]
+        T1["Latency > 8s P95
+        → Trigger Level 1 Retry"]
+        T2["Latency > 20s or Error rate > 5%
+        → Trigger Level 2 Fallback"]
+        T3["Fallback also > 20s or Error rate > 20%
+        → Trigger Level 3 Bypass + PagerDuty"]
+        T4["Queue depth > 100 jobs
+        → Auto-scale agent workers (K8s HPA)"]
     end
 
     Monitoring --> Thresholds
-    Thresholds --> Actions["🔧 Automated Actions\n(no manual intervention required)"]
+    Thresholds --> Actions["🔧 Automated Actions
+    (no manual intervention required)"]
 ```
 
 ### 6.5 Long-Term Tool Replacement Strategy
